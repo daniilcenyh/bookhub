@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: bookhub
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookhub
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/bookhub
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+  docker:
+    compose:
+      enabled: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+logging:
+  level:
+    com.hamming.bookhub: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

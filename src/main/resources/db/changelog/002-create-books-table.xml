@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="002-create-books-table" author="your-name">
+        <createTable tableName="t_books">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="genre" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="true" foreignKeyName="fk_books_user_id" references="t_users(id)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="t_books" indexName="idx_books_title">
+            <column name="title"/>
+        </createIndex>
+
+        <createIndex tableName="t_books" indexName="idx_books_author">
+            <column name="author"/>
+        </createIndex>
+
+        <createIndex tableName="t_books" indexName="idx_books_genre">
+            <column name="genre"/>
+        </createIndex>
+
+        <createIndex tableName="t_books" indexName="idx_books_user_id">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
