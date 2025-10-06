@@ -89,17 +89,6 @@
             <column name="rating" value="GOOD"/>
             <column name="user_id" value="d4e5f6a7-b8c9-012d-ef12-345678901234"/>
         </insert>
-
-        <!-- Книга без пользователя (для тестирования) -->
-        <insert tableName="t_books">
-            <column name="id" value="f9c0d1e2-f3a4-5678-4567-890123456789"/>
-            <column name="title" value="Sample Book Without Owner"/>
-            <column name="description" value="This is a sample book that doesn't belong to any specific user, used for testing purposes."/>
-            <column name="author" value="Anonymous Author"/>
-            <column name="genre" value="OTHER"/>
-            <column name="rating" value="POOR"/>
-            <column name="user_id" value=""/>
-        </insert>
     </changeSet>
 
 </databaseChangeLog>
