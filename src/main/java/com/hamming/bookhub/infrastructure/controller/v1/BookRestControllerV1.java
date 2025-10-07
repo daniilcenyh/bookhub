@@ -47,10 +47,22 @@ public class BookRestControllerV1 {
         return null;
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<BookResponse>> findAllByAuthor(
+            @RequestParam(name = "pageSize", required = false) Integer pageSize,
+            @RequestParam(name = "pageNumber", required = false) Integer pageNumber,
+            @RequestParam(name = "author", required = false) String author
+    ) {
+        return null;
+    }
+
     @GetMapping
     public ResponseEntity<List<BookResponse>> findAll(
             @RequestParam(name = "pageSize", required = false) Integer pageSize,
-            @RequestParam(name = "pageNumber", required = false) Integer pageNumber
+            @RequestParam(name = "pageNumber", required = false) Integer pageNumber,
+            @RequestParam(name = "author", required = false) String author,
+            @RequestParam(name = "genre", required = false) BookGenre genre
+
     ) {
         return null;
     }
