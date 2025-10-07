@@ -5,9 +5,11 @@ import com.hamming.bookhub.domain.model.enums.BookRating;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -44,11 +46,9 @@ public class BookEntity {
     private BookGenre genre;
 
     @NotNull
-    @Enumerated(value = EnumType.STRING)
-    @Column(length = 32)
-    private BookRating rating;
+    @PositiveOrZero
+    private Double rating;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @ManyToMany(mappedBy = "library", fetch = FetchType.LAZY)
+    private List<UserEntity> users;
 }

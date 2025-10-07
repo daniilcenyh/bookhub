@@ -5,9 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <include file="db/changelog/001-create-users-table.xml" relativeToChangelogFile="true"/>
-    <include file="db/changelog/002-create-books-table.xml" relativeToChangelogFile="true"/>
-    <include file="db/changelog/003-insert-test-users.xml" relativeToChangelogFile="true"/>
-    <include file="db/changelog/004-insert-test-books.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog/001-create-users-table.xml"/>
+    <include file="db/changelog/002-create-books-table.xml"/>
+    <include file="db/changelog/003-insert-test-users.xml"/>
+    <include file="db/changelog/004-insert-test-books.xml"/>
 
 </databaseChangeLog>
