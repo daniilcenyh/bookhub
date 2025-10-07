@@ -25,7 +25,7 @@ public class UserEntity {
 
     @NotNull
     @NotBlank
-    @Size(min = 5, max = 100, message = "Title must be between 5 and 100 characters")
+    @Size(min = 5, max = 100, message = "Username must be between 5 and 100 characters")
     private String username;
 
     @Email
@@ -33,6 +33,9 @@ public class UserEntity {
     @NotBlank
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @ManyToMany
+    @JoinTable(name = "user_books",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id"))
     private List<BookEntity> library;
 }

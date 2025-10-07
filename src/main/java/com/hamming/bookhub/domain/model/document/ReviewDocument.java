@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ReviewDocument {
 
     @Id
-    private UUID id;
+    private UUID _id;
 
     private UUID bookId;
 
@@ -26,7 +26,7 @@ public class ReviewDocument {
 
     private String feedback;
 
-    private BookRating rating;
+    private Double rating;
 
     @Field("createdAt")
     private LocalDateTime createdAt;
