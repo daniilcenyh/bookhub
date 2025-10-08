@@ -17,7 +17,7 @@ public interface BookRepository extends CrudRepository<BookEntity, UUID> {
     @Query("""
             SELECT b FROM BookEntity b
             WHERE b.genre = :genre
-            AND b.rating = 'GOOD'
+            AND b.rating >= 4.0
             """)
     List<BookEntity> findByGenre(@Param("genre") BookGenre genre,
                                  Pageable pageable);
@@ -25,7 +25,7 @@ public interface BookRepository extends CrudRepository<BookEntity, UUID> {
     @Query("""
             SELECT b FROM BookEntity b
             WHERE (:author IS NULL OR b.author = :author)
-            AND b.rating = 'GOOD'
+            AND b.rating >= 4.0
             """)
     List<BookEntity> findByAuthor(
             @Param("author") String author,
@@ -34,7 +34,7 @@ public interface BookRepository extends CrudRepository<BookEntity, UUID> {
 
     @Query("""
             SELECT b FROM BookEntity b
-            WHERE b.rating = 'EXCELLENT'
+            WHERE b.rating >= 4.0
             """)
     List<BookEntity> findByFilter(
             Pageable pageable
