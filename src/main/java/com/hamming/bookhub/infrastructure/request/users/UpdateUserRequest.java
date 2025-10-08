@@ -1,9 +1,12 @@
 package com.hamming.bookhub.infrastructure.request.users;
 
+import com.hamming.bookhub.infrastructure.response.BookResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 public record UpdateUserRequest (
         @NotNull

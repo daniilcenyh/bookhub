@@ -1,7 +1,8 @@
 package com.hamming.bookhub.domain.model.document;
 
-import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -19,9 +20,11 @@ public class ReviewDocument {
 
     @Id
     private UUID _id;
+    @Indexed
     private UUID bookId;
     private UUID userId;
     private String feedback;
+    @Indexed
     private Double rating;
 
     @Field("createdAt")
