@@ -35,7 +35,8 @@ public class UserServiceImpl implements UserService {
         log.info("REGISTRATION_NEW_USER time: {}", LocalDateTime.now());
         if (validationUserFieldsIfExist(request.email(), request.username())) {
             log.warn("USER_ALREADY_EXISTS with USERNAME: {}, EMAIL: {}", request.username(), request.email());
-            throw new UserAlreadyExistsException("USER_ALREADY_EXISTS with USERNAME: {%s}, EMAIL: {%s}.Time exception: {%s}".formatted(request.username(), request.email(), LocalDateTime.now()));
+            throw new UserAlreadyExistsException("USER_ALREADY_EXISTS with USERNAME: {%s}, EMAIL: {%s}.Time exception: {%s}"
+                    .formatted(request.username(), request.email(), LocalDateTime.now()));
         }
         var entityToSave = userMapper.fromCreateNewUserRequestToUserEntity(request);
 
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(UUID id) {
         log.info("FIND_USER_BY_UUID time: {}", LocalDateTime.now());
         var entity = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(id, LocalDateTime.now()))
+                () -> new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}"
+                        .formatted(id, LocalDateTime.now()))
         );
         log.info("SUCCESSFUL_FOUNDED_USER with UUID: {}", id);
         return userMapper.fromUserEntityToUserResponse(entity);
@@ -68,7 +70,8 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(UUID id, UpdateUserRequest request) {
         if (!userRepository.existsById(id)) {
             log.warn("USER_NOT_FOUNDED with UUID: {}. Time exception: {}", id, LocalDateTime.now());
-            throw new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(id, LocalDateTime.now()));
+            throw new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}"
+                    .formatted(id, LocalDateTime.now()));
         }
         if (validationUserFieldsIfExist(request.email(), request.username())) {
             log.warn("USER_ALREADY_EXISTS with USERNAME: {}, EMAIL: {}", request.username(), request.email());
@@ -97,7 +100,8 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(UUID id) {
         log.info("DELETE_USER_BY_UUID time: {}", LocalDateTime.now());
         var entity = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(id, LocalDateTime.now()))
+                () -> new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}"
+                        .formatted(id, LocalDateTime.now()))
         );
 
         userRepository.delete(entity);
@@ -107,6 +111,6 @@ public class UserServiceImpl implements UserService {
 
     private boolean validationUserFieldsIfExist(String email, String username) {
         log.info("VALIDATION_IF_EXISTS_USERNAME_OR_EMAIL_REQUEST");
-        return !userRepository.existsByUsername(username) && !userRepository.existsByEmail(email);
+        return userRepository.existsByUsername(username) && userRepository.existsByEmail(email);
     }
 }
