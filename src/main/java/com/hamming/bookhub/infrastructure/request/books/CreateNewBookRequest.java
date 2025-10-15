@@ -31,8 +31,6 @@ public record CreateNewBookRequest(
         BookGenre genre,
 
         @NotNull
-        @Enumerated(value = EnumType.STRING)
-        @Column(length = 32)
-        BookRating rating
+        Double rating
 ) {
 }

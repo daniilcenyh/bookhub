@@ -1,7 +1,6 @@
 package com.hamming.bookhub.infrastructure.request.books;
 
 import com.hamming.bookhub.domain.model.enums.BookGenre;
-import com.hamming.bookhub.domain.model.enums.BookRating;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,8 +30,6 @@ public record UpdateBookRequest(
         BookGenre genre,
 
         @NotNull
-        @Enumerated(value = EnumType.STRING)
-        @Column(length = 32)
-        BookRating rating
+        Double rating
 ) {
 }

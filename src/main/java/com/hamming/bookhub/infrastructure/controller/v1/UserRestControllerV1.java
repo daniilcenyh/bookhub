@@ -1,5 +1,6 @@
 package com.hamming.bookhub.infrastructure.controller.v1;
 
+import com.hamming.bookhub.application.service.UserService;
 import com.hamming.bookhub.infrastructure.request.users.RegistrationNewUserRequest;
 import com.hamming.bookhub.infrastructure.response.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/users")
 public class UserRestControllerV1 {
+
+    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> registerNewUser(
