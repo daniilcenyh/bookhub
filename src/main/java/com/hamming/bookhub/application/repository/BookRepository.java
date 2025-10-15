@@ -35,8 +35,16 @@ public interface BookRepository extends CrudRepository<BookEntity, UUID> {
     @Query("""
             SELECT b FROM BookEntity b
             WHERE b.rating >= 4.0
+            AND (:author IS NULL OR b.author = :author)
+            AND (:genre IS NULL OR b.genre = :genre)
             """)
     List<BookEntity> findByFilter(
-            Pageable pageable
+            Pageable pageable,
+            @Param("author") String author,
+            @Param("genre") BookGenre genre
     );
+
+    boolean existsByTitle(String title);
+
+    boolean existsByAuthor(String author);
 }

@@ -33,8 +33,6 @@ public class LibraryServiceImpl implements LibraryService {
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
-    //TODO: оптимизировать метода в формате:
-    // вместо проверок existsById сразу брать элемент по UUID и в случает ошибки прокидывать через orElseThrow()
     /**
      * @param userId
      * @param request
@@ -44,27 +42,25 @@ public class LibraryServiceImpl implements LibraryService {
     @Transactional
     public UserResponse addBookToLibrary(UUID userId, AddNewBookInLibraryUserRequest request) {
         log.info("ADD_NEW_BOOK_IN_LIBRARY whit BOOK_UUID: {}", request.bookId());
-        if (!userRepository.existsById(userId)) {
-            log.warn("USER_NOT_FOUNDED with UUID: {}. Time exception: {}", userId, LocalDateTime.now());
-            throw new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(userId, LocalDateTime.now()));
-        }
-        if (!bookRepository.existsById(request.bookId())) {
-            log.warn("BOOK_NOT_FOUNDED with UUID: {}. Time exception: {}", userId, LocalDateTime.now());
-            throw new BookNotFoundException("BOOK_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(userId, LocalDateTime.now()));
-        }
+
+        var userToAddNewBook = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(userId, LocalDateTime.now()))
+        );
+
+        var bookToAddLibrary = bookRepository.findById(request.bookId()).orElseThrow(
+                () -> new BookNotFoundException("BOOK_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(userId, LocalDateTime.now()))
+        );
+
         log.info("SUCCESSFUL_EXISTED_USER_AND_BOOK with USER_UUID: {}, BOOK_UUID", userId, request.bookId());
 
-        var userToAddNewBook = userRepository.findById(userId);
-        var bookToAddLibrary = bookRepository.findById(request.bookId());
-
-        if (userToAddNewBook.get().getLibrary().contains(bookToAddLibrary)) {
+        if (userToAddNewBook.getLibrary().contains(bookToAddLibrary)) {
             log.info("BOOK_ALREADY_EXISTS_IN_LIBRARY user with UUID: {}", userId);
             throw new BookAlreadyExistsInLibraryUserException("BOOK_ALREADY_EXISTS_IN_LIBRARY user with UUID: {%s}".formatted(userId));
         }
 
-        userToAddNewBook.get().getLibrary().add(bookToAddLibrary.get()); // добавление BookEntity в UserEntity
+        userToAddNewBook.getLibrary().add(bookToAddLibrary); // добавление BookEntity в UserEntity
 
-        var updatedUser = userRepository.save(userToAddNewBook.get());  // сохранение измененного пользователя
+        var updatedUser = userRepository.save(userToAddNewBook);  // сохранение измененного пользователя
 
         var userResponse = userMapper.fromUserEntityToUserResponse(updatedUser); // преобразование UserEntity в UserResponse
 
@@ -104,7 +100,7 @@ public class LibraryServiceImpl implements LibraryService {
 
         existedUserEntity.getLibrary().remove(existedBookEntity);
 
-        var updatedUserWithoutRemovedBook = userRepository.save(existedUserEntity);
+        userRepository.save(existedUserEntity);
     }
 
     /**
@@ -120,6 +116,9 @@ public class LibraryServiceImpl implements LibraryService {
                         () -> new UserNotFoundException("USER_NOT_FOUNDED with UUID: {%s}. Time exception: {%s}".formatted(userId, LocalDateTime.now()))
                 );
 
-        return List.of();
+        return existedUserEntity.getLibrary()
+                .stream()
+                .map(bookMapper::fromBookEntityToBookResponse)
+                .toList();
     }
 }
