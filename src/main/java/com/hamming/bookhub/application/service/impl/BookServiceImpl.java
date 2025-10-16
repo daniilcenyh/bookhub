@@ -3,6 +3,7 @@ package com.hamming.bookhub.application.service.impl;
 import com.hamming.bookhub.application.filter.books.BooksSearchByAuthorFilter;
 import com.hamming.bookhub.application.filter.books.BooksSearchByGenreFilter;
 import com.hamming.bookhub.application.filter.books.CommonBooksSearchFilter;
+import com.hamming.bookhub.application.filter.recommendations.CommonTopBookFilter;
 import com.hamming.bookhub.application.mapper.BookMapper;
 import com.hamming.bookhub.application.repository.BookRepository;
 import com.hamming.bookhub.application.repository.ReviewRepository;
@@ -77,7 +78,15 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public List<BookResponse> findBooksByCommonFilter(CommonBooksSearchFilter filter) {
-        return List.of();
+        int pageNumber = filter.pageNumber() == null ? 0 : filter.pageNumber();
+        int pageSize = filter.pageSize() == null ? 10 : filter.pageSize();
+
+        var pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
+
+        return bookRepository.findByFilter(pageable, filter.author(), filter.genre())
+                .stream()
+                .map(bookMapper::fromBookEntityToBookResponse)
+                .toList();
     }
 
     /**
@@ -86,7 +95,15 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public List<BookResponse> findBooksByGenre(BooksSearchByGenreFilter filter) {
-        return List.of();
+        int pageNumber = filter.pageNumber() == null ? 0 : filter.pageNumber();
+        int pageSize = filter.pageSize() == null ? 10 : filter.pageSize();
+
+        var pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
+
+        return bookRepository.findByGenre(filter.genre(), pageable)
+                .stream()
+                .map(bookMapper::fromBookEntityToBookResponse)
+                .toList();
     }
 
     /**
@@ -146,14 +163,26 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Cacheable(cacheNames = "top_books", key = "#bookId")
-    public List<BookResponse> getTopBooks() {
-        return List.of();
+    public List<BookResponse> getTopBooks(CommonTopBookFilter filter) {
+        log.info("CACHE_REQUEST_MISS");
+        log.info("LOAD_BOOKS_TOP_FROM_PSQL");
+
+        int pageNumber = filter.pageNumber() == null ? 0 : filter.pageNumber();
+        int pageSize = filter.pageSize() == null ? 10 : filter.pageSize();
+
+        var pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
+
+        var topBooks = bookRepository.findTopBooksByRating(pageable);
+
+        return topBooks.stream()
+                .map(bookMapper::fromBookEntityToBookResponse)
+                .toList();
     }
 
     /**
      * @param bookId
      */
-    // TODO: еще подумать как правильно реализовать обновление рейтинга книги
+    // TODO: еще подумать как еще лучше реализовать обновление рейтинга книги
     //  и обновления в кэше + обновление топа книг
     @Override
     @Transactional

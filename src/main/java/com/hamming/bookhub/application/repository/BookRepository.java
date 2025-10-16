@@ -44,6 +44,12 @@ public interface BookRepository extends CrudRepository<BookEntity, UUID> {
             @Param("genre") BookGenre genre
     );
 
+    @Query("""
+            SELECT b FROM BookEntity b
+            WHERE b.rating > 4.5
+            """)
+    List<BookEntity> findTopBooksByRating(Pageable pageable);
+
     boolean existsByTitle(String title);
 
     boolean existsByAuthor(String author);

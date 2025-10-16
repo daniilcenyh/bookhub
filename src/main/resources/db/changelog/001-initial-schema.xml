@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="001-1" author="your-name">
+        <comment>Create books table</comment>
+        <createTable tableName="t_books">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="genre" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-2" author="your-name">
+        <comment>Create users table</comment>
+        <createTable tableName="t_users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-3" author="your-name">
+        <comment>Create user_books junction table</comment>
+        <createTable tableName="user_books">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_books_user_id"
+                             references="t_users(id)"/>
+            </column>
+            <column name="book_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_books_book_id"
+                             references="t_books(id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="user_books" columnNames="user_id, book_id"
+                       constraintName="pk_user_books"/>
+    </changeSet>
+
+</databaseChangeLog>
