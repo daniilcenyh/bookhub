@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 
 public record RecommendationGenreRequest(
+        int pageSize,
+        int pageNumber,
         @NotNull
         @Enumerated(value = EnumType.STRING)
         @Column(length = 32)
