@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="002-1" author="your-name">
+        <comment>Insert sample books data</comment>
+        <insert tableName="t_books">
+            <column name="id" value="a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"/>
+            <column name="title" value="The Great Gatsby"/>
+            <column name="description" value="A classic novel of the Jazz Age, telling the story of the mysterious millionaire Jay Gatsby and his obsession with the beautiful Daisy Buchanan."/>
+            <column name="author" value="F. Scott Fitzgerald"/>
+            <column name="genre" value="FICTION"/>
+            <column name="rating" value="4.5"/>
+        </insert>
+
+        <insert tableName="t_books">
+            <column name="id" value="b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12"/>
+            <column name="title" value="To Kill a Mockingbird"/>
+            <column name="description" value="A gripping story of racial injustice and childhood innocence set in the American South during the Great Depression."/>
+            <column name="author" value="Harper Lee"/>
+            <column name="genre" value="FICTION"/>
+            <column name="rating" value="4.8"/>
+        </insert>
+
+        <insert tableName="t_books">
+            <column name="id" value="c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13"/>
+            <column name="title" value="Clean Code: A Handbook of Agile Software Craftsmanship"/>
+            <column name="description" value="Essential reading for software developers that teaches how to write clean, maintainable code."/>
+            <column name="author" value="Robert C. Martin"/>
+            <column name="genre" value="TECHNOLOGY"/>
+            <column name="rating" value="4.7"/>
+        </insert>
+
+        <insert tableName="t_books">
+            <column name="id" value="d3eebc99-9c0b-4ef8-bb6d-6bb9bd380a14"/>
+            <column name="title" value="Sapiens: A Brief History of Humankind"/>
+            <column name="description" value="A fascinating exploration of how Homo sapiens became the dominant species on Earth."/>
+            <column name="author" value="Yuval Noah Harari"/>
+            <column name="genre" value="HISTORY"/>
+            <column name="rating" value="4.6"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="002-2" author="your-name">
+        <comment>Insert sample users data</comment>
+        <insert tableName="t_users">
+            <column name="id" value="e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15"/>
+            <column name="username" value="john_reader"/>
+            <column name="email" value="john.reader@example.com"/>
+        </insert>
+
+        <insert tableName="t_users">
+            <column name="id" value="f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16"/>
+            <column name="username" value="sarah_bookworm"/>
+            <column name="email" value="sarah.bookworm@example.com"/>
+        </insert>
+
+        <insert tableName="t_users">
+            <column name="id" value="g6eebc99-9c0b-4ef8-bb6d-6bb9bd380a17"/>
+            <column name="username" value="mike_developer"/>
+            <column name="email" value="mike.developer@example.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="002-3" author="your-name">
+        <comment>Create user-book relationships</comment>
+        <insert tableName="user_books">
+            <column name="user_id" value="e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15"/>
+            <column name="book_id" value="a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"/>
+        </insert>
+
+        <insert tableName="user_books">
+            <column name="user_id" value="e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15"/>
+            <column name="book_id" value="b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12"/>
+        </insert>
+
+        <insert tableName="user_books">
+            <column name="user_id" value="f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16"/>
+            <column name="book_id" value="c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13"/>
+        </insert>
+
+        <insert tableName="user_books">
+            <column name="user_id" value="g6eebc99-9c0b-4ef8-bb6d-6bb9bd380a17"/>
+            <column name="book_id" value="a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"/>
+        </insert>
+
+        <insert tableName="user_books">
+            <column name="user_id" value="g6eebc99-9c0b-4ef8-bb6d-6bb9bd380a17"/>
+            <column name="book_id" value="c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

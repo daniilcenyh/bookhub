@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="003-1" author="your-name">
+        <comment>Add indexes for better query performance</comment>
+
+        <!-- Indexes for books table -->
+        <createIndex tableName="t_books" indexName="idx_books_title">
+            <column name="title"/>
+        </createIndex>
+
+        <createIndex tableName="t_books" indexName="idx_books_author">
+            <column name="author"/>
+        </createIndex>
+
+        <createIndex tableName="t_books" indexName="idx_books_genre">
+            <column name="genre"/>
+        </createIndex>
+
+        <createIndex tableName="t_books" indexName="idx_books_rating">
+            <column name="rating"/>
+        </createIndex>
+
+        <!-- Indexes for users table -->
+        <createIndex tableName="t_users" indexName="idx_users_username">
+            <column name="username"/>
+        </createIndex>
+
+        <createIndex tableName="t_users" indexName="idx_users_email">
+            <column name="email"/>
+        </createIndex>
+
+        <!-- Indexes for junction table -->
+        <createIndex tableName="user_books" indexName="idx_user_books_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="user_books" indexName="idx_user_books_book_id">
+            <column name="book_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
