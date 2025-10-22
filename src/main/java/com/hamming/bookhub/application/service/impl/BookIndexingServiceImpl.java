@@ -21,18 +21,19 @@ public class BookIndexingServiceImpl implements BookIndexingService {
 
     @Override
     public void reindexAllBooks() {
-        List<BookEntity> books = (List<BookEntity>) bookRepository.findAll();
+        Iterable<BookEntity> bookEntityIterable = bookRepository.findAll();
 
-        bookElasticsearchRepository.saveAll(
-                books.stream()
-                        .map(
-                        book -> BookElasticSearchDocument.builder()
-                                .id(book.getId())
-                                .title(book.getTitle())
-                                .description(book.getDescription())
-                                .build()
-                )
-                        .toList()
-        );
+
+        while (bookEntityIterable.iterator().hasNext()) {
+            var book = bookEntityIterable.iterator().next();
+            bookElasticsearchRepository.save(new BookElasticSearchDocument(book.getId(), book.getTitle(), book.getDescription()));
+        }
+//        bookElasticsearchRepository.saveAll(
+//                books.stream()
+//                        .map(
+//                        book -> new BookElasticSearchDocument(book.getId(), book.getTitle(), book.getDescription())
+//                )
+//                        .toList()
+//        );
     }
 }

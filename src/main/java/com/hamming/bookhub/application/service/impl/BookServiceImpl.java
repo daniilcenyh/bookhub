@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
     private final int PAGE_NUMBER = 0;
     private final int PAGE_SIZE = 10;
 
-
+    @Override
     public List<BookResponse> searchBookViaElastic(ElasticSearchBookFilter filter) {
         int pageNumber = filter.pageNumber() == null ? 0 : filter.pageNumber();
         int pageSize = filter.pageSize() == null ? 10 : filter.pageSize();
