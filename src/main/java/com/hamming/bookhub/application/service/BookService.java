@@ -3,6 +3,7 @@ package com.hamming.bookhub.application.service;
 import com.hamming.bookhub.application.filter.books.BooksSearchByAuthorFilter;
 import com.hamming.bookhub.application.filter.books.BooksSearchByGenreFilter;
 import com.hamming.bookhub.application.filter.books.CommonBooksSearchFilter;
+import com.hamming.bookhub.application.filter.books.ElasticSearchBookFilter;
 import com.hamming.bookhub.application.filter.recommendations.CommonTopBookFilter;
 import com.hamming.bookhub.infrastructure.request.books.CreateNewBookRequest;
 import com.hamming.bookhub.infrastructure.request.books.UpdateBookRequest;
@@ -31,5 +32,7 @@ public interface BookService {
 
     // Пересчитывает рейтинг на основе ReviewDocument.
     void updateRating(UUID bookId);
+
+    List<BookResponse> searchBookViaElastic(ElasticSearchBookFilter filter);
 
 }

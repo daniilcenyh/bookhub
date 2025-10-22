@@ -17,7 +17,6 @@ import com.hamming.bookhub.infrastructure.request.reviews.CreateNewReviewForBook
 import com.hamming.bookhub.infrastructure.response.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -39,14 +38,12 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final ReviewMapper reviewMapper;
 
-    // TODO: подумать над правильной обработкой кэша
     /**
      * @param request
      * @return
      */
     @Override
     @Transactional
-    @CachePut(cacheNames = "reviews:books", key = "#result.bookId")
     public ReviewResponse addReview(CreateNewReviewForBookRequest request) {
 
         // Проверка на существование пользователя с UUID и книги с UUID
@@ -82,7 +79,6 @@ public class ReviewServiceImpl implements ReviewService {
      * @return
      */
     @Override
-    @Cacheable(cacheNames = "reviews:books", key = "#result.bookId")
     public List<ReviewResponse> getReviewsByBook(ReviewSearchFilter filter) {
         log.info("CACHE_REQUEST_MISS");
         log.info("LOAD_REVIEWS_FROM_MONGO by BOOK_UUID: {}", filter.bokId());

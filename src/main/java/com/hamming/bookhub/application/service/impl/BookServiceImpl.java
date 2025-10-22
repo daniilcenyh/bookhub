@@ -3,14 +3,17 @@ package com.hamming.bookhub.application.service.impl;
 import com.hamming.bookhub.application.filter.books.BooksSearchByAuthorFilter;
 import com.hamming.bookhub.application.filter.books.BooksSearchByGenreFilter;
 import com.hamming.bookhub.application.filter.books.CommonBooksSearchFilter;
+import com.hamming.bookhub.application.filter.books.ElasticSearchBookFilter;
 import com.hamming.bookhub.application.filter.recommendations.CommonTopBookFilter;
 import com.hamming.bookhub.application.mapper.BookMapper;
+import com.hamming.bookhub.application.repository.BookElasticsearchRepository;
 import com.hamming.bookhub.application.repository.BookRepository;
 import com.hamming.bookhub.application.repository.ReviewRepository;
 import com.hamming.bookhub.application.service.BookService;
 import com.hamming.bookhub.domain.exception.books.BookAlreadyExistsException;
 import com.hamming.bookhub.domain.exception.books.BookNotFoundException;
 import com.hamming.bookhub.domain.model.document.ReviewDocument;
+import com.hamming.bookhub.domain.model.entity.BookEntity;
 import com.hamming.bookhub.infrastructure.request.books.CreateNewBookRequest;
 import com.hamming.bookhub.infrastructure.request.books.UpdateBookRequest;
 import com.hamming.bookhub.infrastructure.response.BookResponse;
@@ -24,34 +27,71 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
+    private static final String CACHE_KEY_PREFIX_FOR_BOOK = "BOOK:";
+    private static final String CACHE_KEY_PREFIX_FOR_TOP_BOOK = "TOP_BOOK:";
+
     private final BookRepository bookRepository;
     private final ReviewRepository reviewRepository;
+    private final BookElasticsearchRepository bookElasticsearchRepository;
     private final BookMapper bookMapper;
 
     private final int PAGE_NUMBER = 0;
     private final int PAGE_SIZE = 10;
 
+
+    public List<BookResponse> searchBookViaElastic(ElasticSearchBookFilter filter) {
+        int pageNumber = filter.pageNumber() == null ? 0 : filter.pageNumber();
+        int pageSize = filter.pageSize() == null ? 10 : filter.pageSize();
+
+        var pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
+
+        var searchedBooks = bookElasticsearchRepository.searchByQuery(filter.textQuery(), pageable);
+
+        Map<UUID, Integer> idsMap = new HashMap<>();
+        var booksDocument = searchedBooks.getContent();
+        for (int i = 0; i < booksDocument.size(); i++) {
+            idsMap.put(booksDocument.get(i).getId(), i);
+        }
+
+        Set<UUID> uniqueIds = idsMap.keySet();
+
+        List<BookEntity> booksFromDB = (List<BookEntity>) bookRepository.findAllById(uniqueIds);
+        booksFromDB.sort(Comparator.comparingInt(book -> idsMap.get(book.getId())));
+
+        return booksFromDB.stream()
+                .map(bookMapper::fromBookEntityToBookResponse)
+                .toList();
+    }
+
     @Override
     @Transactional
-    @CachePut(cacheNames = "books", key = "#result.id")
+    @CachePut(
+            value = CACHE_KEY_PREFIX_FOR_BOOK,
+            key = "#result.id"
+    )
     public BookResponse addBook(CreateNewBookRequest request) {
         log.info("APPEND_NEW_BOOK_REQUEST time: {}", LocalDateTime.now());
+
         if (validationBookFieldsIfExist(request.title(), request.author())) {
             log.warn("BOOK_ALREADY_EXISTS with TITLE: {}, with AUTHOR_NAME: {}", request.title(), request.author());
-            throw new BookAlreadyExistsException("BOOK_ALREADY_EXISTS with TITLE: {%s}, with AUTHOR_NAME: {%s}".formatted( request.title(), request.author()));
+            throw new BookAlreadyExistsException("BOOK_ALREADY_EXISTS with TITLE: {%s}, with AUTHOR_NAME: {%s}"
+                    .formatted( request.title(), request.author()));
         }
+
         log.info("SAVING_NEW_BOOK_TO_PSQL_REDIS time: {}", LocalDateTime.now());
+
         var bookToSave = bookMapper.fromCreateNewBookRequestToBookEntity(request);
         var savedBook = bookRepository.save(bookToSave);
+
         log.info("SUCCESSFUL_APPENDED_NEW_BOOK time: {}", LocalDateTime.now());
+
         return bookMapper.fromBookEntityToBookResponse(savedBook);
     }
 
@@ -61,7 +101,11 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional
-    @Cacheable(cacheNames = "books", key = "#bookId", unless = "#result == null")
+    @Cacheable(
+            value = CACHE_KEY_PREFIX_FOR_BOOK,
+            key = "#bookId",
+            unless = "#result == null"
+    )
     public BookResponse getBookById(UUID bookId) {
         log.info("CACHE_REQUEST_MISS");
         log.info("LOAD_BOOK_FROM_PSQL BOOK_UUID: {}", bookId);
@@ -122,7 +166,10 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional
-    @CachePut(cacheNames = "books", key = "#bookId")
+    @CachePut(
+            value = CACHE_KEY_PREFIX_FOR_BOOK,
+            key = "#bookId"
+    )
     public BookResponse updateBook(UUID bookId, UpdateBookRequest request) {
         log.info("UPDATING_BOOK_IN_PSQL_AND_REFRESHING_CACHE UUID: {}", bookId);
         if (!bookRepository.existsById(bookId)) {
@@ -146,7 +193,10 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "books", key = "#bookId")
+    @CacheEvict(
+            value = CACHE_KEY_PREFIX_FOR_BOOK,
+            key = "#bookId"
+    )
     public void deleteBook(UUID bookId) {
         log.info("DELETE_BOOK_FROM_PSQL_AND_EVICT_CACHE");
         if (!bookRepository.existsById(bookId)) {
@@ -162,7 +212,10 @@ public class BookServiceImpl implements BookService {
      * @return
      */
     @Override
-    @Cacheable(cacheNames = "top_books", key = "#bookId")
+    @Cacheable(
+            value = CACHE_KEY_PREFIX_FOR_TOP_BOOK,
+            key = "#bookId"
+    )
     public List<BookResponse> getTopBooks(CommonTopBookFilter filter) {
         log.info("CACHE_REQUEST_MISS");
         log.info("LOAD_BOOKS_TOP_FROM_PSQL");
@@ -186,8 +239,14 @@ public class BookServiceImpl implements BookService {
     //  и обновления в кэше + обновление топа книг
     @Override
     @Transactional
-    @CachePut(cacheNames = "books", key = "#bookId")
-    @CacheEvict(cacheNames = "top_books", key = "#bookId")
+    @CachePut(
+            value = CACHE_KEY_PREFIX_FOR_BOOK,
+            key = "#bookId"
+    )
+    @CacheEvict(
+            value = CACHE_KEY_PREFIX_FOR_TOP_BOOK,
+            key = "#bookId"
+    )
     public void updateRating(UUID bookId) {
         var existedBook = bookRepository.findById(bookId)
                 .orElseThrow(

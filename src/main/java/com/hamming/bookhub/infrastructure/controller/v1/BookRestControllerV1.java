@@ -3,6 +3,7 @@ package com.hamming.bookhub.infrastructure.controller.v1;
 import com.hamming.bookhub.application.filter.books.BooksSearchByAuthorFilter;
 import com.hamming.bookhub.application.filter.books.BooksSearchByGenreFilter;
 import com.hamming.bookhub.application.filter.books.CommonBooksSearchFilter;
+import com.hamming.bookhub.application.filter.books.ElasticSearchBookFilter;
 import com.hamming.bookhub.application.service.BookService;
 import com.hamming.bookhub.domain.model.enums.BookGenre;
 import com.hamming.bookhub.infrastructure.request.books.CreateNewBookRequest;
@@ -28,6 +29,19 @@ import java.util.UUID;
 public class BookRestControllerV1 {
 
     private final BookService bookService;
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<BookResponse>> search(
+            @RequestParam("query") String query,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        log.info("SEARCH_BOOK_BY_ELASTIC_QUERY_REQUEST. Time request: {}", LocalDateTime.now());
+        var filter = new ElasticSearchBookFilter(query, page, size);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(bookService.searchBookViaElastic(filter));
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,7 +73,7 @@ public class BookRestControllerV1 {
                 .body(bookService.getBookById(id));
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/genre")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<BookResponse>> findAllByGenre(
             @RequestParam(name = "pageSize", required = false) Integer pageSize,
@@ -72,7 +86,7 @@ public class BookRestControllerV1 {
                 .body(bookService.findBooksByGenre(filter));
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/author")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<BookResponse>> findAllByAuthor(
             @RequestParam(name = "pageSize", required = false) Integer pageSize,
