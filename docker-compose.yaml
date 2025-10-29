@@ -38,6 +38,18 @@ services:
     networks:
       - bookhub-network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.22
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch_data
+    ports:
+      - "9200:9200"
+    networks:
+      - bookhub-network
+
   app:
     build: .
     container_name: bookhub-app
@@ -45,12 +57,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bookhub
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/bookhub
       SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_ELASTICSEARCH_HOST: elasticsearch
     ports:
       - "8080:8080"
     depends_on:
       - postgres
       - mongodb
       - redis
+      - elasticsearch
     networks:
       - bookhub-network
 

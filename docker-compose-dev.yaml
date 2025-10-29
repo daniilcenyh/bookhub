@@ -37,10 +37,23 @@ services:
     networks:
       - bookhub-network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.22
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch_data
+    ports:
+      - "9200:9200"
+    networks:
+      - bookhub-network
+
 volumes:
   postgres_data:
   mongodb_data:
   redis_data:
+  elasticsearch_data:
 
 networks:
   bookhub-network:

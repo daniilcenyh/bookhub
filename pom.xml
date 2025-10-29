@@ -53,11 +53,6 @@
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.mongock</groupId>-->
-<!--            <artifactId>mongock-springboot</artifactId>-->
-<!--            <version>5.3.4</version>-->
-<!--        </dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -65,11 +60,20 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+        <!-- Spring Boot Starter для Elasticsearch -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -80,12 +84,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.restdocs</groupId>-->
-<!--			<artifactId>spring-restdocs-mockmvc</artifactId>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -101,19 +100,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -129,43 +115,22 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.asciidoctor</groupId>-->
-<!--				<artifactId>asciidoctor-maven-plugin</artifactId>-->
-<!--				<version>2.2.1</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>generate-docs</id>-->
-<!--						<phase>prepare-package</phase>-->
-<!--						<goals>-->
-<!--							<goal>process-asciidoc</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<backend>html</backend>-->
-<!--							<doctype>book</doctype>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--				<dependencies>-->
-<!--					<dependency>-->
-<!--						<groupId>org.springframework.restdocs</groupId>-->
-<!--						<artifactId>spring-restdocs-asciidoctor</artifactId>-->
-<!--						<version>${spring-restdocs.version}</version>-->
-<!--					</dependency>-->
-<!--				</dependencies>-->
-<!--			</plugin>-->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <source>21</source> <!-- или ваша версия Java -->
+                    <target>21</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.36</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

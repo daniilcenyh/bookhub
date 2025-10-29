@@ -26,6 +26,7 @@ spring:
       port: 6379
       database: 0
 
+
   docker:
     compose:
       enabled: true
