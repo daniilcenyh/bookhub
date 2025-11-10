@@ -254,9 +254,7 @@ public class BookServiceImpl implements BookService {
                                 .formatted(bookId, LocalDateTime.now()))
                 );
 
-        int pageSize = PAGE_SIZE;
-        int pageNumber = PAGE_NUMBER;
-        var pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
+        var pageable = Pageable.ofSize(PAGE_SIZE).withPage(PAGE_NUMBER);
 
         var reviews = reviewRepository.findByBookId(bookId, pageable);
         var updatedRatingBook = reviews.stream()
